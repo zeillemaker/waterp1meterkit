@@ -4,6 +4,7 @@ substitutions:
   friendly_name: WaterP1MeterKit
   waterp1meterkit_software_version: "2.0"
   waterp1meterkit_hardware_version: "V2"
+  dsmr_ip: !secret dsmr_ip
 
 #Esphome start
 esphome:
