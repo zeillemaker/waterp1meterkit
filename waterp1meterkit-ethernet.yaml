@@ -241,3 +241,65 @@ text_sensor:
     timestamp:
       id: dsmr_timestamp
       internal: true
+
+  # DSMR READER
+  - platform: template
+    id: dsmr_timestamp_formatted
+    internal: true
+    update_interval: 2s
+    lambda: |-
+      esphome::optional<std::string> result;
+      std::string input = id(dsmr_timestamp).state;
+      if (!input.empty()) {
+        std::string year = "20" + input.substr(0, 2);
+        std::string month = input.substr(2, 2);
+        std::string day = input.substr(4, 2);
+        std::string hour = input.substr(6, 2);
+        std::string minute = input.substr(8, 2);
+        std::string second = input.substr(10, 2);
+        std::string indicator = input.substr(12, 1);
+        std::string timezone = "+00:00";
+        if (indicator == "W") {
+          timezone = "+01:00";
+        } else if (indicator == "S") {
+          timezone = "+02:00";
+        }
+        result = year + "-" + month + "-" + day + "T" + hour + ":" + minute + ":" + second + timezone;
+      }
+      return result;
+
+#DSMR READER
+http_request:
+  timeout: 2s
+
+interval:
+  - interval: 15sec
+    then:
+      - http_request.post:
+          url: http://${dsmr_ip}/api/v2/datalogger/dsmrreading
+          headers:
+            Authorization: !secret dsmr_reader_token
+            Content-Type: application/json
+          verify_ssl: false
+          json: |-
+            root["electricity_currently_delivered"] = id(dsmr_electricity_currently_delivered).state;
+            root["electricity_currently_returned"] = id(dsmr_electricity_currently_returned).state;
+            root["electricity_delivered_1"] = id(dsmr_electricity_delivered_1).state;
+            root["electricity_delivered_2"] = id(dsmr_electricity_delivered_2).state;
+            root["electricity_returned_1"] = id(dsmr_electricity_returned_1).state;
+            root["electricity_returned_2"] = id(dsmr_electricity_returned_2).state;
+            root["extra_device_delivered"] = id(dsmr_extra_device_delivered).state;
+            root["extra_device_timestamp"] = id(dsmr_timestamp_formatted).state;
+            root["phase_currently_delivered_l1"] = id(dsmr_phase_currently_delivered_l1).state;
+            root["phase_currently_delivered_l2"] = id(dsmr_phase_currently_delivered_l2).state;
+            root["phase_currently_delivered_l3"] = id(dsmr_phase_currently_delivered_l3).state;
+            root["phase_currently_returned_l1"] = id(dsmr_phase_currently_returned_l1).state;
+            root["phase_currently_returned_l2"] = id(dsmr_phase_currently_returned_l2).state;
+            root["phase_currently_returned_l3"] = id(dsmr_phase_currently_returned_l3).state;
+            root["phase_power_current_l1"] = id(dsmr_phase_power_current_l1).state;
+            root["phase_power_current_l2"] = id(dsmr_phase_power_current_l2).state;
+            root["phase_power_current_l3"] = id(dsmr_phase_power_current_l3).state;
+            root["phase_voltage_l1"] = id(dsmr_phase_voltage_l1).state;
+            root["phase_voltage_l2"] = id(dsmr_phase_voltage_l2).state;
+            root["phase_voltage_l3"] = id(dsmr_phase_voltage_l3).state;
+            root["timestamp"] = id(dsmr_timestamp_formatted).state;
