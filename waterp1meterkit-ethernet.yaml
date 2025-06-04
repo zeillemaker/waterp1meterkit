@@ -4,7 +4,8 @@ substitutions:
   friendly_name: WaterP1MeterKit
   waterp1meterkit_software_version: "2.0"
   waterp1meterkit_hardware_version: "V2"
-  dsmr_ip: !secret dsmr_ip
+  dsmr_reader_ip: !secret dsmr_reader_ip
+  dsmr_reader_port: !secret dsmr_reader_port
 
 #Esphome start
 esphome:
@@ -26,13 +27,22 @@ logger:
 
 # Enable Home Assistant API
 api:
+  reboot_timeout: 0s
+  encryption:
+    key: !secret waterp1meter_api_key
 
 #Enable Over the Air updates
 ota:
-  - platform: esphome
+  platform: esphome
+  password: !secret waterp1meterkit_ota_password
 
 dashboard_import:
   package_import_url: github://zeillemaker/waterp1meterkit/waterp1meterkit-ethernet.yaml@main
+
+safe_mode:
+  disabled: false
+  reboot_timeout: 10min
+  num_attempts: 5
 
 ethernet:
   type: LAN8720
@@ -42,8 +52,27 @@ ethernet:
   phy_addr: 1
   power_pin: GPIO33
 
+# Webserver configuration
 web_server:
   port: 80
+  version: 2
+  include_internal: false
+  auth:
+    username: !secret waterp1meter_server_user
+    password: !secret waterp1meter_server_password
+  local: true
+
+# MQtt
+#mqtt:
+#  broker: !secret mqtt_server_ip
+#  username: !secret mqtt_user_waterp1meterkit
+#  password: !secret mqtt_password_waterp1meterkit
+#  client_id: $name
+
+# Time settings
+time:
+  - platform: homeassistant
+    id: homeassistant_time
 
 # Switch to restart the waterp1meter
 switch:
@@ -222,6 +251,7 @@ text_sensor:
   - platform: version
     id: text_sensor_version
     name: "ESPHome Version"
+    hide_timestamp: true
   - platform: template
     id: text_sensor_waterp1meterkit_software_version
     name: "Software Version"
@@ -278,7 +308,7 @@ interval:
   - interval: 15sec
     then:
       - http_request.post:
-          url: http://${dsmr_ip}/api/v2/datalogger/dsmrreading
+          url: http://${dsmr_reader_ip}:${dsmr_reader_port}/api/v2/datalogger/dsmrreading
           request_headers:
             Authorization: !secret dsmr_reader_token
             Content-Type: application/json
