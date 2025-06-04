@@ -65,8 +65,8 @@ web_server:
 # MQtt
 #mqtt:
 #  broker: !secret mqtt_server_ip
-#  username: !secret mqtt_user_waterp1meterkit
-#  password: !secret mqtt_password_waterp1meterkit
+#  username: !secret mqtt_user_waterp1meter
+#  password: !secret mqtt_password_waterp1meter
 #  client_id: $name
 
 # Time settings
