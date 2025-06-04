@@ -34,7 +34,7 @@ api:
 #Enable Over the Air updates
 ota:
   platform: esphome
-  password: !secret waterp1meterkit_ota_password
+  password: !secret waterp1meter_ota_password
 
 dashboard_import:
   package_import_url: github://zeillemaker/waterp1meterkit/waterp1meterkit-ethernet.yaml@main
