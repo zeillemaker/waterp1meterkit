@@ -27,7 +27,7 @@ logger:
 
 # Enable Home Assistant API
 api:
-  reboot_timeout: 0s
+  reboot_timeout: 0s    # disabled
   encryption:
     key: !secret waterp1meter_api_key
 
@@ -51,6 +51,9 @@ ethernet:
   clk_mode: GPIO17_OUT
   phy_addr: 1
   power_pin: GPIO33
+
+# Network component
+network:
 
 # Webserver configuration
 web_server:
