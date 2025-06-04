@@ -272,16 +272,16 @@ text_sensor:
 #DSMR READER
 http_request:
   timeout: 2s
+  verify_ssl: false
 
 interval:
   - interval: 15sec
     then:
       - http_request.post:
           url: http://${dsmr_ip}/api/v2/datalogger/dsmrreading
-          headers:
+          request_headers:
             Authorization: !secret dsmr_reader_token
             Content-Type: application/json
-          verify_ssl: false
           json: |-
             root["electricity_currently_delivered"] = id(dsmr_electricity_currently_delivered).state;
             root["electricity_currently_returned"] = id(dsmr_electricity_currently_returned).state;
