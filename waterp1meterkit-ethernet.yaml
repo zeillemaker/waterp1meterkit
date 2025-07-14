@@ -309,7 +309,7 @@ http_request:
   verify_ssl: false
 
 interval:
-  - interval: 15sec
+  - interval: 5sec
     then:
       - http_request.post:
           url: http://${dsmr_reader_ip}:${dsmr_reader_port}/api/v2/datalogger/dsmrreading
