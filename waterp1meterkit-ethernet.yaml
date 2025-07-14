@@ -67,11 +67,11 @@ web_server:
   local: true
 
 # MQtt
-#mqtt:
-#  broker: !secret mqtt_server_ip
-#  username: !secret mqtt_user_waterp1meter
-#  password: !secret mqtt_password_waterp1meter
-#  client_id: $name
+# mqtt:
+#   broker: !secret mqtt_server_ip
+#   username: !secret mqtt_user_waterp1meter
+#   password: !secret mqtt_password_waterp1meter
+#   client_id: $name
 
 # Time settings
 time:
