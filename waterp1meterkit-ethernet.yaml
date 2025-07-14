@@ -6,6 +6,7 @@ substitutions:
   waterp1meterkit_hardware_version: "V2"
   dsmr_reader_ip: !secret dsmr_reader_ip
   dsmr_reader_port: !secret dsmr_reader_port
+  dsmr_reader_token: !secret dsmr_reader_token
 
 #Esphome start
 esphome:
@@ -313,7 +314,7 @@ interval:
       - http_request.post:
           url: http://${dsmr_reader_ip}:${dsmr_reader_port}/api/v2/datalogger/dsmrreading
           request_headers:
-            Authorization: !secret dsmr_reader_token
+            Authorization: Token ${dsmr_reader_token}
             Content-Type: application/json
           json: |-
             root["electricity_currently_delivered"] = id(dsmr_electricity_currently_delivered).state;
